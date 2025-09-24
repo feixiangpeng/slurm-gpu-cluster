@@ -1,0 +1,23 @@
+ClusterName={{ slurm_cluster_name }}
+ControlMachine={{ ansible_hostname }}
+ControlAddr={{ ansible_default_ipv4.address }}
+
+AuthType=auth/munge
+CryptoType=crypto/munge
+
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core_Memory
+
+SlurmUser=slurm
+SlurmdUser=slurm
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmdPidFile=/var/run/slurmd.pid
+
+{% for host in groups['gpu_nodes'] %}
+NodeName={{ host }} NodeAddr={{ hostvars[host]['ansible_default_ipv4']['address'] }} CPUs=40 Sockets=2 CoresPerSocket=10 ThreadsPerCore=2 RealMemory=64000 State=UNKNOWN
+{% endfor %}
+
+PartitionName=gpu Nodes={{ groups['gpu_nodes'] | join(',') }} Default=YES MaxTime=INFINITE State=UP

@@ -1,0 +1,9 @@
+# Private cluster configuration
+ansible/inventory/hosts.yml
+~/.ssh/config
+
+# Ansible retry files
+*.retry
+
+# Local environment files
+.env

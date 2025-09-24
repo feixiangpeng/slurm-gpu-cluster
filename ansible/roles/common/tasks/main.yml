@@ -1,0 +1,61 @@
+---
+- name: Update system packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install base packages
+  apt:
+    name:
+      - build-essential
+      - wget
+      - curl
+      - git
+      - vim
+      - munge
+      - libmunge-dev
+      - python3-dev
+      - libssl-dev
+      - libpam0g-dev
+      - libnuma-dev
+      - libhwloc-dev
+    state: present
+  become: yes
+
+- name: Create slurm group
+  group:
+    name: slurm
+    gid: 1001
+  become: yes
+
+- name: Create slurm user
+  user:
+    name: slurm
+    uid: 1001
+    group: slurm
+    system: yes
+    shell: /bin/false
+    home: /nonexistent
+    create_home: no
+  become: yes
+
+- name: Create Slurm directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: slurm
+    group: slurm
+    mode: '0755'
+  loop:
+    - /etc/slurm
+    - /var/log/slurm
+    - /var/spool/slurm
+  become: yes
+
+- name: Start and enable munge
+  systemd:
+    name: munge
+    state: started
+    enabled: yes
+  become: yes

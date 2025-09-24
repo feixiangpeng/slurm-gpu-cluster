@@ -1,0 +1,40 @@
+---
+- name: Download Slurm source
+  get_url:
+    url: "https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2"
+    dest: "/tmp/slurm-{{ slurm_version }}.tar.bz2"
+  become: yes
+
+- name: Extract and compile Slurm
+  shell: |
+    cd /tmp
+    tar xjf slurm-{{ slurm_version }}.tar.bz2
+    cd slurm-{{ slurm_version }}
+    ./configure --prefix=/usr/local/slurm --with-systemd --enable-pam
+    make -j$(nproc)
+    make install
+  args:
+    creates: /usr/local/slurm/bin/srun
+  become: yes
+
+- name: Create gres.conf for GPU detection
+  copy:
+    content: "AutoDetect=nvml"
+    dest: /etc/slurm/gres.conf
+    owner: slurm
+    group: slurm
+  become: yes
+
+- name: Create slurmd systemd service
+  template:
+    src: slurmd.service.j2
+    dest: /etc/systemd/system/slurmd.service
+  become: yes
+
+- name: Start and enable slurmd
+  systemd:
+    name: slurmd
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: yes
