@@ -1,0 +1,13 @@
+---
+- name: Install Prometheus
+  include_tasks: prometheus.yml
+
+- name: Install Grafana
+  include_tasks: grafana.yml
+
+- name: Install Node Exporter
+  include_tasks: node-exporter.yml
+
+- name: Install GPU Exporter
+  include_tasks: gpu-exporter.yml
+  when: "'gpu_nodes' in group_names"

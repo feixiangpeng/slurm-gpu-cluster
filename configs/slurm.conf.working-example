@@ -1,0 +1,27 @@
+# Working Slurm Configuration - Based on Tested Cluster
+ClusterName=gpu-cluster
+ControlMachine=controller-hostname
+ControlAddr=YOUR_CONTROLLER_IP
+
+# Authentication (REQUIRED)
+AuthType=auth/munge
+CryptoType=crypto/munge
+
+# Scheduling (Tested Configuration)
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core_Memory
+
+# Logging
+SlurmUser=slurm
+SlurmdUser=slurm
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
+
+# Node Definitions (Adjust for your hardware)
+NodeName=gpu-node-1 NodeAddr=YOUR_GPU_NODE_1_IP CPUs=40 Sockets=2 CoresPerSocket=10 ThreadsPerCore=2 RealMemory=64000 State=UNKNOWN
+NodeName=gpu-node-2 NodeAddr=YOUR_GPU_NODE_2_IP CPUs=40 Sockets=2 CoresPerSocket=10 ThreadsPerCore=2 RealMemory=64000 State=UNKNOWN
+NodeName=gpu-node-3 NodeAddr=YOUR_GPU_NODE_3_IP CPUs=40 Sockets=2 CoresPerSocket=10 ThreadsPerCore=2 RealMemory=64000 State=UNKNOWN
+
+# Partition Definition
+PartitionName=gpu Nodes=gpu-node-[1-3] Default=YES MaxTime=INFINITE State=UP
