@@ -1,3 +1,4 @@
+# Google Summer of Code Open Source Project 
 # Slurm GPU Cluster Deployment
 
 Automated deployment for Slurm-based GPU clusters using Ansible.
